@@ -11,4 +11,5 @@ import java.util.List;
 public class UserDto implements Serializable {
     private Long id;
     private String name;
+    private List<Long> filmId;
 }

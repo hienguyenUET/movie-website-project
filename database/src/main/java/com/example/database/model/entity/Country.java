@@ -17,6 +17,6 @@ public class Country {
     @Column
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "country")
     private List<Film> films = new ArrayList<>();
 }

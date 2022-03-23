@@ -1,6 +1,7 @@
 package com.example.database.model.entity;
 
 import com.example.database.model.dto.UserDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,7 @@ public class User {
     @Column
     private String name;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "user_film",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -31,7 +33,9 @@ public class User {
     )
     private List<Film> films = new ArrayList<>();
 
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
 
     public UserDto toDto() {
         return UserDto.builder()

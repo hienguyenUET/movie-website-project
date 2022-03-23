@@ -17,6 +17,6 @@ public class Type {
     @Column
     private String name;
 
-    @OneToMany
+    @OneToMany(mappedBy = "type")
     private List<Film> films = new ArrayList<>();
 }

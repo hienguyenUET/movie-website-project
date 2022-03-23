@@ -18,8 +18,8 @@ public class Film {
     @Column(name = "homepage")
     private String homepage;
 
-    @Column(name = "language")
-    private String language;
+//    @Column(name = "language")
+//    private String language;
 
     @Column(name = "title")
     private String title;
@@ -50,5 +50,8 @@ public class Film {
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;
+
+    @OneToMany(mappedBy = "film")
+    private List<Comment> comments = new ArrayList<>();
 
 }
