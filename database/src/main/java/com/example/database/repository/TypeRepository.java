@@ -1,4 +1,7 @@
 package com.example.database.repository;
 
-public interface TypeRepository {
+import com.example.database.model.entity.Type;
+import org.springframework.data.repository.CrudRepository;
+
+public interface TypeRepository extends CrudRepository<Type, Long> {
 }

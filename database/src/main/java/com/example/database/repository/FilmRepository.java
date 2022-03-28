@@ -1,4 +1,7 @@
 package com.example.database.repository;
 
-public interface FilmRepository {
+import com.example.database.model.entity.Film;
+import org.springframework.data.repository.CrudRepository;
+
+public interface FilmRepository extends CrudRepository<Film, Long> {
 }

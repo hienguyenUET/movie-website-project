@@ -22,8 +22,8 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse> addUser(@RequestBody UserForm data) {
-        User user = userService.addNewUser(data);
+    public ResponseEntity<ApiResponse> addUser(@RequestBody UserForm userForm) {
+        User user = userService.addNewUser(userForm);
         UserDto dto = user.toDto();
         ApiResponse response = ApiResponse.success(user, HttpStatus.OK.value(), "Thêm người dùng thành công");
         return ResponseEntity.ok(response);
@@ -37,4 +37,26 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getUserById(@PathVariable long id) {
+        User user = userService.getById(id);
+        UserDto dto = user.toDto();
+        ApiResponse response = ApiResponse.success(dto,HttpStatus.OK.value(), String.format("Người dùng %d",id));
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping( "/{id}")
+    public ResponseEntity<ApiResponse> updateUser(@RequestBody UserForm userForm, @PathVariable("id") Long id) {
+        User user = userService.updateUser(id, userForm.getPassword(), userForm.getFilmId());
+        UserDto dto = user.toDto();
+        ApiResponse response = ApiResponse.success(user,HttpStatus.OK.value(), "Chỉnh sửa thành công người dùng: " + userForm.getName());
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable long id) {
+        userService.deleteUser(id);
+        ApiResponse response = ApiResponse.success(null,HttpStatus.OK.value(), "Xóa thành công người dùng: " + id);
+        return ResponseEntity.ok(response);
+    }
 }

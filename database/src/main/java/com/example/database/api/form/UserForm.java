@@ -8,5 +8,7 @@ import java.util.List;
 public class UserForm {
     private String name;
 
+    private String password;
+
     private List<Long> filmId;
 }

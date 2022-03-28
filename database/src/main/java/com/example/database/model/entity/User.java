@@ -25,6 +25,9 @@ public class User {
     @Column
     private String name;
 
+    @Column
+    private String password;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "user_film",
@@ -41,6 +44,8 @@ public class User {
         return UserDto.builder()
                 .id(id)
                 .name(name)
+                .password(password)
+                .films(films)
                 .build();
     }
 }

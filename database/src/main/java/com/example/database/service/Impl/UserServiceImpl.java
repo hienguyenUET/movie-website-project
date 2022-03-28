@@ -11,7 +11,6 @@ import com.example.database.utils.exception.BadRequestException;
 import com.example.database.utils.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
@@ -22,52 +21,57 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
-//    @Autowired
-//    private FilmRepository filmRepository;
+    @Autowired
+    private FilmRepository filmRepository;
 
     @Override
-    public User addNewUser(UserForm data) {
-        if(!StringUtils.hasText(data.getName())) {
+    public User addNewUser(UserForm userForm) {
+        // check xem có bỏ trống tên hay không
+        if(!StringUtils.hasText(userForm.getName())) {
             String mess = "Invalid argument";
             throw new BadRequestException(mess);
         }
 
-//        List<Film> films = new ArrayList<>();
-//
-//        if(data.getFilmId().size() > 0) {
-//            data.getFilmId().forEach(item -> {
-//                Film film = filmRepository.findById(item).get();
-//                films.add(film);
-//            });
-//        }
+        // check xem tên đã tồn tại trong database chưa
+        // nếu tồn tại rồi báo lỗi
+        if(!ObjectUtils.isEmpty(userRepository.findByName(userForm.getName()))) {
+            String mess = "Invalid argument";
+            throw new BadRequestException(mess);
+        }
+
+        if(!StringUtils.hasText(userForm.getPassword())) {
+            String mess = "Invalid argument";
+            throw new BadRequestException(mess);
+        }
+
         User user = User.builder()
-                .name(data.getName())
+                .name(userForm.getName())
+                .password(userForm.getPassword())
                 .build();
-
-//        Optional<List<Team>> teamLists = Optional.ofNullable(user.getTeams());
-//        if(!teamLists.isPresent()) {
-//            user.setTeams(teams);
-//        }else {
-//            teams.forEach(item -> {
-//                teamLists.get().add(item);
-//            });
-//            user.setTeams(teamLists.get());
-//        }
-
         return save(user);
     }
 
     @Override
-    public User updateUser(Long id, String name) {
+    public User updateUser(Long id, String password, List<Long> filmId) {
         User user = userRepository.findById(id).get();
         if(ObjectUtils.isEmpty(user)) {
             String mess = "user-not-exits";
             throw new NotFoundException(mess);
         }
+        user.setPassword(password);
 
-        user.setName(name);
+        if(filmId == null) {
+            return save(user);
+        } else {
+            filmId.forEach(item -> {
+                int dem = (int) user.getFilms().stream().filter(film -> item == film.getId()).count();
+                if(dem == 0) {
+                    user.getFilms().add(filmRepository.findById(item).get());
+                }
+            });
 
-        return save(user);
+            return save(user);
+        }
     }
 
     @Override

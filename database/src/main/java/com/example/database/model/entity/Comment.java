@@ -26,6 +26,7 @@ public class Comment {
     @Column
     private String content;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "film_id")
     private Film film;

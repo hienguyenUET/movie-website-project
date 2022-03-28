@@ -1,4 +1,7 @@
 package com.example.database.repository;
 
-public interface CountryRepository {
+import com.example.database.model.entity.Country;
+import org.springframework.data.repository.CrudRepository;
+
+public interface CountryRepository extends CrudRepository<Country, Long> {
 }

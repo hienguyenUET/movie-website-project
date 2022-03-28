@@ -4,14 +4,15 @@ import com.example.database.model.entity.Film;
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Data
-public class UserDto implements Serializable {
-    private Long id;
+@Builder
+public class ActorDto {
+    private long id;
+
     private String name;
-    private String password;
+
     private List<Film> films;
 }

@@ -36,4 +36,26 @@ public class CommentController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getCommentById(@PathVariable long id) {
+        Comment comment = commentService.getById(id);
+        CommentDto dto = comment.toDto();
+        ApiResponse response = ApiResponse.success(dto,HttpStatus.OK.value(), String.format("Người dùng %d",id));
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping( "/{id}")
+    public ResponseEntity<ApiResponse> updateComment(@RequestBody CommentForm commentForm, @PathVariable("id") Long id) {
+        Comment comment = commentService.updateComment(id, commentForm.getContent());
+        CommentDto dto = comment.toDto();
+        ApiResponse response = ApiResponse.success(comment,HttpStatus.OK.value(), "Chỉnh sửa thành công bình luận: " + id);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> deleteComment(@PathVariable long id) {
+        commentService.deleteComment(id);
+        ApiResponse response = ApiResponse.success(null,HttpStatus.OK.value(), "Xóa thành công bình luận: " + id);
+        return ResponseEntity.ok(response);
+    }
 }

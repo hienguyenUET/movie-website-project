@@ -1,15 +1,15 @@
-package com.example.database.api.form;
+package com.example.database.model.dto;
 
 import com.example.database.model.entity.*;
+import lombok.Builder;
 import lombok.Data;
 
-import javax.persistence.*;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @Data
-public class FilmForm {
+public class FilmDto {
     private long id;
 
     private String homepage;
@@ -20,10 +20,13 @@ public class FilmForm {
 
     private Date productionDate;
 
-    private List<Long> actorId;
+    private Type type;
 
-    private long typeId;
+    private List<User> users;
 
-    private Long countryId;
+    private List<Actor> actors;
 
+    private Country country;
+
+    private List<Comment> comments;
 }
