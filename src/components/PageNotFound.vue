@@ -1,7 +1,6 @@
 <template>
   <div class="content">
-     404 ERROR! <br>
-     PAGE NOT FOUND</div>
+  </div>
 </template>
 
 <script>
@@ -12,7 +11,10 @@ export default {
 
 <style scoped>
 div {
-    font-weight: 500;
-    font-size: 40px;
+  background-image: url('https://hri.com.vn/wp-content/uploads/bfi_thumb/1-1-or1e3o9bq12fwbzekgpmqzl8z58064rkfiu0a9dg9i.jpg');
+  font-weight: 500;
+  font-size: 40px;
+  width: 1330px;
+  height: 1000px;
 }
 </style>
