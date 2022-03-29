@@ -1,72 +1,73 @@
 <template>
+  <web-header/>
   <div class="signup">
     <h1>Đăng Ký</h1>
     <div class="components">
-      <form action="signup" @submit.prevent="submitForm">
-        <div class="component-item">
-          <!-- <label for="email">Email đăng ký: </label> -->
-          <input
-            type="email"
-            name=""
-            id="email"
-            placeholder="Email đăng ký"
-            v-model="email"
-          />
-          <span v-if="v$.email.$error">
-            {{ v$.email.$errors[0].$message }}
-          </span>
-        </div>
-        <div class="component-item">
-          <input
-            type="text"
-            name=""
-            id="username"
-            placeholder="Tên người sử dụng"
-            v-model="username"
-          />
-          <span v-if="v$.username.$error">
-            {{ v$.username.$errors[0].$message }}
-          </span>
-        </div>
-        <div class="component-item">
-          <!-- <label for="password">Mật khẩu</label> -->
-          <input
-            type="password"
-            id="password"
-            placeholder="Mật khẩu"
-            v-model="password.password"
-          />
-          <span v-if="v$.password.password.$error">
-            {{ v$.password.password.$errors[0].$message }}
-          </span>
-        </div>
-        <div class="component-item">
-          <!-- <label for="passwordAgain">Nhập lại mật khẩu</label> -->
-          <input
-            type="password"
-            name=""
-            id="passwordAgain"
-            placeholder="Nhập lại mật khẩu"
-            v-model="password.checkPassword"
-          />
-          <span v-if="v$.password.checkPassword.$error">
-            {{ v$.password.checkPassword.$errors[0].$message }}
-          </span>
-        </div>
-        <div class="component-item" id="checkbox">
-          <input type="checkbox" />
-          <span>Tôi đồng ý với các điều khoản sử dụng</span>
-        </div>
-        <div class="component-item" id="btn">
-          <button type="button" @click.prevent="submitForm">Đăng ký</button>
-        </div>
-      </form>
+      <div class="component-item">
+        <!-- <label for="email">Email đăng ký: </label> -->
+        <input
+          type="email"
+          name=""
+          id="email"
+          placeholder="Email đăng ký"
+          v-model="email"
+        />
+        <span v-if="v$.email.$error">
+          {{ v$.email.$errors[0].$message }}
+        </span>
+      </div>
+      <div class="component-item">
+        <input
+          type="text"
+          name=""
+          id="username"
+          placeholder="Tên người sử dụng"
+          v-model="username"
+        />
+        <span v-if="v$.username.$error">
+          {{ v$.username.$errors[0].$message }}
+        </span>
+      </div>
+      <div class="component-item">
+
+        <input
+          type="password"
+          id="password"
+          placeholder="Mật khẩu"
+          v-model="password.password"
+        />
+        <span v-if="v$.password.password.$error">
+          {{ v$.password.password.$errors[0].$message }}
+        </span>
+      </div>
+      <div class="component-item">
+        <input
+          type="password"
+          name=""
+          id="passwordAgain"
+          placeholder="Nhập lại mật khẩu"
+          v-model="password.checkPassword"
+        />
+        <span v-if="v$.password.checkPassword.$error">
+          {{ v$.password.checkPassword.$errors[0].$message }}
+        </span>
+      </div>
+      <div class="component-item" id="checkbox">
+        <input type="checkbox" />
+        <span>Tôi đồng ý với các điều khoản sử dụng</span>
+      </div>
+      <div class="component-item" id="btn">
+        <button @click="submitForm" type="submit">Đăng ký</button>
+      </div>
     </div>
   </div>
+  <web-footer/>
 </template>
 
 <script>
 import useValidate from "@vuelidate/core";
+import WebHeader from './WebHeader.vue'
+import WebFooter from './WebFooter.vue'
 import {
   required,
   email,
@@ -76,6 +77,8 @@ import {
 } from "@vuelidate/validators";
 const mustHave = (value) => value.includes("@") || value.includes(".");
 export default {
+  name: 'SignUp',
+  components: {WebHeader, WebFooter},
   // setup() {
   //   const state = reactive({
   //     email: "",
@@ -152,6 +155,7 @@ label {
   border: none;
   border-radius: 10px;
   margin: 0 auto;
+  margin-top: 100px;
   background: linear-gradient(to bottom right, rgb(24, 173, 116), #3498db);
 }
 .signup input {
