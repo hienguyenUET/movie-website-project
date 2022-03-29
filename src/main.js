@@ -10,6 +10,8 @@ import router from './router'
 app.use(router);
 import SignUp from './components/SignUp.vue'
 import LoginForm from './components/LoginForm.vue'
+import MovieDetail from './components/MovieDetail.vue'
 app.component('sign-up', SignUp)
 app.component('login-form', LoginForm)
+app.component('movie-detail', MovieDetail)
 app.mount('#app')
