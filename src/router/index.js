@@ -12,17 +12,28 @@ import HorrorFilter from '../components/HorrorFilter.vue';
 import FeatureFilm from '../components/FeatureFilm.vue';
 import TvMovies from '../components/TvMovies.vue';
 import PageNotFound from '../components/PageNotFound.vue';
+import UserProfile from '../components/UserProfile.vue';
+
+// import { getAuth } from 'firebase/auth'
+
 const routes = [{
         path: '/signup',
         component: SignUp
     },
     {
-        path: '/login',
-        component: LoginForm
+        path: '/',
+        component: LandingPage,
+
     },
     {
-        path: '/',
-        component: LandingPage
+        path: '/user/:id',
+        component: UserProfile,
+    },
+    {
+        path: '/login',
+        component: LoginForm,
+
+
     },
     {
         path: '/movie/:id',
@@ -31,6 +42,9 @@ const routes = [{
     {
         path: '/search',
         component: FilmSearch,
+        // meta: {
+        //     requiresAuth: true
+        // }
     },
     {
         path: '/popularity',
@@ -68,7 +82,29 @@ const routes = [{
 
 const router = createRouter({
     history: createWebHistory(),
-    routes
+    routes,
+    scrollBehavior() {
+        return {
+            left: 0,
+            top: 0,
+            behavior: 'smooth'
+        }
+
+    }
+
 })
+
+
+// router.beforeEach((to, _from, next) => {
+//     if (to.matched.some((record) => record.meta.requiresAuth)) {
+//         if (getAuth().currentUser) {
+//             next();
+//         } else {
+//             next("/");
+//         }
+//     } else {
+//         next();
+//     }
+// });
 
 export default router

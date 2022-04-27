@@ -43,7 +43,7 @@ export default {
 <style scoped>
 .poster img {
   position: relative;
-  width: 250px;
+  width: 300px;
   height: 380px;
 }
 .film {
@@ -51,20 +51,21 @@ export default {
   flex-wrap: wrap;
 }
 .film-item:hover {
-  transform: rotate(-30deg);
--moz-transform: rotate(-30deg);
--webkit-transform: rotate(-30deg);
--o-transform: rotate(-30deg);
--ms-transform: rotate(-30deg);
+  transform: scale(1.1,1.1);
+-moz-transform: scale(1.1,1.1);
+-webkit-transform: scale(1.1,1.1);
+-o-transform: scale(1.1,1.1);
+-ms-transform: scale(1.1,1.1);
 }
 .film-item {
-  margin: 4px;
+  margin: 12px;
   transition: 1s;
 }
 .detail {
   background-color: rgb(21, 133, 99);
   color: #fff;
-  width: 250px;
+  width: 300px;
+  height: 100px;
   display: none;
   position: absolute;
   left: 0;

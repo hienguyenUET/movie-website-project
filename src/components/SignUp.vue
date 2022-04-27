@@ -1,16 +1,15 @@
 <template>
-  <web-header/>
+  <!-- <web-header /> -->
   <div class="signup">
     <h1>Đăng Ký</h1>
-    <div class="components">
+    <form @submit.prevent="submitForm" class="components">
       <div class="component-item">
-        <!-- <label for="email">Email đăng ký: </label> -->
         <input
           type="email"
           name=""
           id="email"
           placeholder="Email đăng ký"
-          v-model="email"
+          v-model="state.email"
         />
         <span v-if="v$.email.$error">
           {{ v$.email.$errors[0].$message }}
@@ -22,116 +21,117 @@
           name=""
           id="username"
           placeholder="Tên người sử dụng"
-          v-model="username"
+          v-model="state.username"
         />
         <span v-if="v$.username.$error">
           {{ v$.username.$errors[0].$message }}
         </span>
       </div>
       <div class="component-item">
-
         <input
           type="password"
           id="password"
           placeholder="Mật khẩu"
-          v-model="password.password"
+          v-model="state.password.password"
         />
         <span v-if="v$.password.password.$error">
           {{ v$.password.password.$errors[0].$message }}
         </span>
       </div>
-      <div class="component-item">
+      <!-- <div class="component-item">
         <input
-          type="password"
+          type="text"
           name=""
-          id="passwordAgain"
-          placeholder="Nhập lại mật khẩu"
-          v-model="password.checkPassword"
+          id="img"
+          placeholder="Ảnh đại diện"
+          v-model="state.imageSrc"
         />
-        <span v-if="v$.password.checkPassword.$error">
-          {{ v$.password.checkPassword.$errors[0].$message }}
-        </span>
-      </div>
-      <div class="component-item" id="checkbox">
-        <input type="checkbox" />
-        <span>Tôi đồng ý với các điều khoản sử dụng</span>
-      </div>
+      </div> -->
       <div class="component-item" id="btn">
-        <button @click="submitForm" type="submit">Đăng ký</button>
+        <button @click="signUpUser" type="submit">Đăng ký</button>
       </div>
-    </div>
+      <div class="change-route">
+        <span>Bạn đã có tài khoản?</span>
+        <span><router-link to="/login">Đăng Nhập</router-link></span>
+      </div>
+    </form>
   </div>
-  <web-footer/>
+  <web-footer />
 </template>
 
 <script>
 import useValidate from "@vuelidate/core";
-import WebHeader from './WebHeader.vue'
-import WebFooter from './WebFooter.vue'
+// import WebHeader from './WebHeader.vue'
+import WebFooter from "./WebFooter.vue";
+import { required, email, minLength } from "@vuelidate/validators";
+import { computed, onMounted, reactive } from "vue";
 import {
-  required,
-  email,
-  minLength,
-  sameAs,
-  helpers,
-} from "@vuelidate/validators";
-const mustHave = (value) => value.includes("@") || value.includes(".");
-export default {
-  name: 'SignUp',
-  components: {WebHeader, WebFooter},
-  // setup() {
-  //   const state = reactive({
-  //     email: "",
-  //     password: {
-  //       password: "",
-  //       checkPassword: "",
-  //     }
-  //   }),
-  //   const rules = computed(() => {
-  //     return {
-  //       email: { required, email },
-  //       password: {
-  //         password: { required, minLength: minLength(6) },
-  //         checkPassword: { required, sameAs: sameAs(state.password.password) },
-  //       }
-  //     }
-  //   }),
-  //   const v$ = useValidate(rules, state)
-  //   return {
-  //     state,
-  //     v$
-  //   }
-  // },
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 
-  data() {
-    return {
-      v$: useValidate(),
+import router from "@/router";
+export default {
+  name: "SignUp",
+  components: { WebFooter },
+  setup() {
+    const state = reactive({
       email: "",
       username: "",
       password: {
         password: "",
-        checkPassword: "",
       },
+    }); 
+    // SIGN-UP
+    const signUpUser = onMounted(()=>{
+      fetch('https://jsonplaceholder.typicode.com/posts', {
+        method: 'POST',
+        headers: {
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+          userID : state.email,
+          title : state.username,
+          body: state.password.password
+        })
+      })
+    })
+    const register = () => {
+      createUserWithEmailAndPassword(
+        getAuth(),
+        state.email,
+        state.password.password
+      )
+        .then(() => {
+          updateProfile(getAuth().currentUser, {
+            displayName: state.username,
+          });
+          router.push("/login");
+        })
+        .catch((error) => {
+          alert(error);
+        });
     };
-  },
-  validations() {
-    return {
-      email: { required, email },
-      username: { required },
-      password: {
+
+    // CHECK VALIDATION FORM
+    const rules = computed(() => {
+      return {
+        email: { required, email },
+        username: { required },
         password: {
-          required,
-          minLength: minLength(6),
-          mustHave: helpers.withMessage(
-            "Your password must include special character(@,.)",
-            mustHave
-          ),
+          password: { required, minLength: minLength(6) },
         },
-        checkPassword: {
-          required,
-          sameAs: sameAs(this.password.password),
-        },
-      },
+      };
+    });
+
+    const v$ = useValidate(rules, state);
+    //
+    return {
+      state,
+      v$,
+      signUpUser,
+      register,
     };
   },
   methods: {
@@ -146,6 +146,8 @@ label {
   font-size: 20px;
 }
 .components {
+  display: flex;
+  flex-direction: column;
   border-top: 2px;
   padding-left: 20px;
 }
@@ -167,12 +169,9 @@ label {
   border-radius: 5px;
   border: none;
 }
-.signup input[type="checkbox"] {
-  width: auto;
-  height: auto;
-}
 #btn {
   padding-bottom: 40px;
+  margin-top: 40px;
 }
 .signup button:hover {
   background-color: rgb(94, 94, 226);
@@ -198,9 +197,13 @@ label {
 }
 .component-item span {
   color: rgb(180, 32, 32);
-  text-align: center;
 }
 #checkbox span {
   color: #000;
 }
+.change-route {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
 </style>

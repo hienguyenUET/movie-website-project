@@ -44,24 +44,27 @@ export default {
 <style scoped>
 .poster img {
   position: relative;
-  width: 250px;
+  width: 300px;
   height: 380px;
 }
 .film {
   display: flex;
   /* justify-content: space-between; */
   flex-wrap: wrap;
+  
 }
 .film-item:hover {
-  transform: translate3d(-20px,-20px,20px);
--moz-transform: translate3d(-20px,-20px,20px);
--webkit-transform: translate3d(-20px,-20px,20px);
--o-transform: translate3d(-20px,-20px,20px);
--ms-transform: translate3d(-20px,-20px),20px;
+  transform: scale(1.1,1.1);
+-moz-transform: scale(1.1,1.1);
+-webkit-transform: scale(1.1,1.1);
+-o-transform: scale(1.1,1.1);
+-ms-transform: scale(1.1,1.1);
 }
 .film-item {
-  margin: 4px;
-  transition: 2s;
+  margin: 12px;
+  transition: 1s;
+  width: 300px;
+  height: 380px;
 }
 h2 {
   margin: 30px 10px;
@@ -69,7 +72,8 @@ h2 {
 .detail {
   background-color: rgb(21, 133, 99);
   color: #fff;
-  width: 250px;
+  width: 300px;
+  height: 100px;
   display: none;
   position: absolute;
   left: 0;

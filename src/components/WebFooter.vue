@@ -56,15 +56,6 @@
       </div>
     </div>
   </div>
-  <!-- <div class="theme">
-    <iframe
-      src="https://www.nhaccuatui.com/mh/auto/uCLJlIwjFJWt"
-      width="1"
-      height="1"
-      allowfullscreen
-      allow="autoplay"
-    ></iframe>
-  </div> -->
 </template>
 
 <script>
@@ -98,9 +89,7 @@ export default {
   flex-direction: column;
   padding: 10px;
 }
-.theme {
-  width: 20%;
-}
+
 .footer-a .icon {
   display: inline;
 }

@@ -1,15 +1,15 @@
 <template>
-  <web-header />
+  <!-- <web-header /> -->
   <div class="login">
     <h1>Đăng Nhập</h1>
-    <div class="components">
+    <form @submit.prevent="submitForm" class="components">
       <div class="component-item">
         <input
           type="text"
           name=""
           id="email"
           placeholder="Email đăng nhập"
-          v-model="email"
+          v-model="state.email"
         />
         <span v-if="v$.email.$error">
           {{ v$.email.$errors[0].$message }}
@@ -20,82 +20,128 @@
           type="password"
           id="password"
           placeholder="Mật khẩu"
-          v-model="password"
+          v-model="state.password"
         />
         <span v-if="v$.password.$error">
           {{ v$.password.$errors[0].$message }}
         </span>
       </div>
+      <p v-if="errMsg">{{ errMsg }}</p>
       <div class="component-item" id="btn">
-        <button type="button" @click.prevent="submitForm">Đăng nhập</button>
+        <button @click="login" type="submit">Đăng nhập</button>
       </div>
-      <div class="content-item" id="resetPass">
-        <a href="#">Quên mật khẩu</a>
+      <div class="component-item" id="btn1">
+        <a id="fb" @click="fbLogin">
+          Đăng nhập với Facebook
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-facebook"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"
+            />
+          </svg>
+        </a>
       </div>
-    </div>
+      <div class="change-route">
+        <span>Bạn chưa có tài khoản?</span>
+        <span><router-link id="route" to="/signup">Đăng Ký</router-link></span>
+      </div>
+    </form>
   </div>
   <web-footer />
-  <!-- <facebook-login class="button"
-      appId="326022817735322"
-      @login="getUserData"
-      @logout="onLogout"
-      @get-initial-status="getUserData">
-    </facebook-login> -->
 </template>
 
 <script>
-// import facebookLogin from 'facebook-login-vuejs';
 import useValidate from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
-import WebHeader from "./WebHeader.vue";
+import { computed, reactive, ref } from "vue";
+// import WebHeader from "./WebHeader.vue";
 import WebFooter from "./WebFooter.vue";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  FacebookAuthProvider,
+} from "firebase/auth";
+import router from "@/router";
 export default {
   components: {
-    WebHeader,
     WebFooter,
+    
   },
-  // methods: {
-  //   getUserData() {
-  //     this.FB.api('/me', 'GET', { fields: 'id,name,email' },
-  //       userInformation => {
-  //         this.personalID = userInformation.id;
-  //         this.email = userInformation.email;
-  //         this.name = userInformation.name;
-  //       }
-  //     )
-  //   },
-  //   sdkLoaded(payload) {
-  //     this.isConnected = payload.isConnected
-  //     this.FB = payload.FB
-  //     if (this.isConnected) this.getUserData()
-  //   },
-  //   onLogin() {
-  //     this.isConnected = true
-  //     this.getUserData()
-  //   },
-  //   onLogout() {
-  //     this.isConnected = false;
-  //   }
-  // }
-  data() {
-    return {
-      v$: useValidate(),
+  setup() {
+    const state = reactive({
       email: "",
-      password: "",
-    };
-  },
-  validations() {
-    return {
-      email: { required, email },
       password: {
-        required,
-        minLength: minLength(6),
+        password: "",
       },
+    });
+
+    //LOGIN FACEBOOK
+    const auth = getAuth();
+    const provider = new FacebookAuthProvider();
+    const errMsg = ref();
+    const fbLogin = () => {
+      signInWithPopup(auth, provider).then(() => {
+        router.push("/")
+      });
+    };
+
+    
+    // LOGIN USER
+    const login = () => {
+      signInWithEmailAndPassword(auth, state.email, state.password)
+        .then(() => {
+          router.push("/");
+        })
+        .catch((error) => {
+          switch (error.code) {
+            case "auth/invalid-email":
+              errMsg.value = "Invalid email";
+              break;
+            case "auth/user-not-found":
+              errMsg.value = "No account with that email was found";
+              break;
+            case "auth/wrong-password":
+              errMsg.value = "Incorrect password";
+              break;
+            default:
+              errMsg.value = "Email or password was incorrect";
+              break;
+          }
+        });
+    };
+    //
+
+
+    //CHECK VALIDATION FORM
+    const rules = computed(() => {
+      return {
+        email: { required, email },
+        password: {
+          password: required,
+          minLength: minLength(6),
+        },
+      };
+    });
+
+    const v$ = useValidate(rules, state);
+    //
+    return {
+      state,
+      v$,
+      login,
+      fbLogin,
+      errMsg,
     };
   },
   methods: {
-    submitForm(event) {
-      event.preventDefault();
+    submitForm() {
       this.v$.$validate();
     },
   },
@@ -106,6 +152,8 @@ label {
   font-size: 20px;
 }
 .components {
+  display: flex;
+  flex-direction: column;
   border-top: 2px;
   padding-left: 20px;
 }
@@ -127,9 +175,6 @@ label {
   border-radius: 5px;
   border: none;
 }
-.login button:hover {
-  background-color: rgb(58, 190, 58);
-}
 #btn {
   padding-top: 20px;
   padding-bottom: 40px;
@@ -140,10 +185,9 @@ label {
   width: 460px;
   height: 50px;
   color: #fff;
-  background-color: rgb(51, 72, 190);
+  background-color: rgb(26, 103, 85);
   border: none;
   border-radius: 5px;
-  transition: 0.5s;
 }
 .login h1 {
   color: #000;
@@ -156,15 +200,32 @@ label {
   width: 430px;
   margin: 20px auto;
 }
-#resetPass {
-  padding-bottom: 20px;
-  padding-right: 20px;
-  text-align: end;
+.change-route {
+  margin-bottom: 30px;
+  text-align: center;
 }
-#resetPass a {
-  text-decoration: none;
+.component-item span {
+  color: rgb(180, 32, 32);
 }
-span {
-  color: rgb(204, 34, 34);
+p {
+  color: rgb(180, 32, 32);
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+#fb {
+  width: 300px;
+  height: 30px;
+  text-decoration: underline;
+  color:rgb(64, 64, 188) ;
+  cursor: pointer;
+}
+#btn1 {
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
+}
+#route {
+  color:green
 }
 </style>
