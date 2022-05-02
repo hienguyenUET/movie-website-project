@@ -2,10 +2,8 @@ package com.example.database.model.entity;
 
 import com.example.database.model.dto.CountryDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.thymeleaf.expression.Lists;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,8 +11,9 @@ import java.util.List;
 
 @Builder
 @Entity
-@Table(name = "countries")
-@Data
+@Table(name = "country")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Country {
@@ -23,18 +22,20 @@ public class Country {
     private long id;
 
     @Column
-    private String name;
+    private String countryName;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "country")
-    private List<Film> films = new ArrayList<>();
-
+    @ManyToMany
+    @JoinTable(
+            name = "movie_country",
+            joinColumns = @JoinColumn(name = "country_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id")
+    )
+    private List<Movie> movies;
 
     public CountryDto toDto() {
         return CountryDto.builder()
                 .id(id)
-                .name(name)
-                .films(films)
+                .countryName(countryName)
                 .build();
     }
 }

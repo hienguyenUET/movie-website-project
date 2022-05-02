@@ -1,12 +1,11 @@
 package com.example.database.model.dto;
 
-import com.example.database.model.entity.Film;
-import com.example.database.model.entity.User;
+import com.example.database.model.entity.Account;
+import com.example.database.model.entity.Movie;
 import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Builder
 @Data
@@ -15,7 +14,7 @@ public class CommentDto implements Serializable {
 
     private String content;
 
-    private Film film;
+    private Movie movie;
 
-    private User user;
+    private Account account;
 }

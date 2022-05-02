@@ -1,6 +1,5 @@
 package com.example.database.api.form;
 
-import com.example.database.model.entity.Film;
 import lombok.Data;
 
 import java.util.List;

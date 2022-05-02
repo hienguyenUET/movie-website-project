@@ -1,10 +1,9 @@
 package com.example.database.model.dto;
 
-import com.example.database.model.entity.Film;
+import com.example.database.model.entity.Movie;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,5 +13,5 @@ public class ActorDto {
 
     private String name;
 
-    private List<Film> films;
+    private List<Movie> movies;
 }
