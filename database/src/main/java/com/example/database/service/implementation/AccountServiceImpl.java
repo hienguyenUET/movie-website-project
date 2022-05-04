@@ -1,10 +1,12 @@
 //package com.example.database.service.Impl;
 //
-//import com.example.database.api.form.PersonForm;
+//import com.example.database.api.form.AccountForm;
+//
 //import com.example.database.model.entity.Account;
 //import com.example.database.repository.MovieRepository;
 //import com.example.database.repository.PersonRepository;
-//import com.example.database.service.PersonService;
+//
+//import com.example.database.service.service.AccountService;
 //import com.example.database.utils.exception.NotFoundException;
 //import org.springframework.stereotype.Service;
 //import org.springframework.util.ObjectUtils;
@@ -13,18 +15,18 @@
 //import java.util.List;
 //
 //@Service
-//public class PersonServiceImpl implements PersonService {
+//public class AccountServiceImpl implements AccountService {
 //    private final PersonRepository personRepository;
 //
 //    private final MovieRepository movieRepository;
 //
-//    public PersonServiceImpl(PersonRepository personRepository, MovieRepository movieRepository) {
+//    public AccountServiceImpl(PersonRepository personRepository, MovieRepository movieRepository) {
 //        this.personRepository = personRepository;
 //        this.movieRepository = movieRepository;
 //    }
 //
 //    @Override
-//    public Account addNewUser(PersonForm personForm) {
+//    public Account addNewUser(AccountForm personForm) {
 ////        String afterEncrypted = PasswordEncoder.encode(personForm.getPassword());
 //
 //        Account account = Account.builder()
@@ -62,7 +64,7 @@
 //    @Override
 //    public void deleteUser(Long id) {
 //        Account account = personRepository.findById(id).get();
-//        if(ObjectUtils.isEmpty(account)) {
+//        if (ObjectUtils.isEmpty(account)) {
 //            String mess = "user-not-exits";
 //            throw new NotFoundException(mess);
 //        }
@@ -73,7 +75,7 @@
 //    @Override
 //    public Account getById(Long id) {
 //        Account account = personRepository.findById(id).get();
-//        if(ObjectUtils.isEmpty(account)) {
+//        if (ObjectUtils.isEmpty(account)) {
 //            String mess = "user-not-exits";
 //            throw new NotFoundException(mess);
 //        }
@@ -83,7 +85,7 @@
 //    @Override
 //    public List<Account> getUserList() {
 //        List<Account> people = (List<Account>) personRepository.findAll();
-//        if(ObjectUtils.isEmpty(people)) {
+//        if (ObjectUtils.isEmpty(people)) {
 //            return Collections.EMPTY_LIST;
 //        }
 //

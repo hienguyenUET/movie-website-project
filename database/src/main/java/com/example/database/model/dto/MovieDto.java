@@ -21,7 +21,7 @@ public class MovieDto {
 
     private Date productionDate;
 
-    private Set<Genre> genre;
+    private List<Genre> genre;
 
     private List<Account> people;
 

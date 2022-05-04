@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
-
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account {
@@ -59,5 +59,16 @@ public class Account {
                 .password(password)
 //                .movies(movies)
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", username='" + username + '\n' +
+                ", name='" + name + '\n' +
+                ", password='" + password + '\n' +
+                ", email='" + email + '\n' +
+                '}';
     }
 }

@@ -1,5 +1,6 @@
 package com.example.database.api.form;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +18,8 @@ import javax.validation.constraints.Size;
 
 @Setter
 @Getter
-public class PersonForm {
+@Builder
+public class AccountForm {
 
     @NotNull(message = "Value cannot be null")
     @Size(min = 6, message = "Username must be longer than 6 characters")

@@ -2,14 +2,13 @@ package com.example.database.model.entity;
 
 import com.example.database.model.dto.MovieDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NonNull;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Todo: create relationship between:
@@ -27,11 +26,10 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    //    @Column(name = "homepage")
-//    private String homepage;
-//
+
     @NonNull
     @Column(name = "title")
+    @JsonProperty("Title")
     private String title;
     //
 //
@@ -57,15 +55,15 @@ public class Movie {
     private List<Actor> actors;
 
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.PERSIST})
     @JoinTable(
             name = "movie_genre",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
-    private Set<Genre> genre;
+    private List<Genre> genre;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "movie_company",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -158,17 +156,17 @@ public class Movie {
         actors.add(actor);
     }
 
-    public Set<Genre> getGenre() {
+    public List<Genre> getGenre() {
         return genre;
     }
 
-    public void setGenre(Set<Genre> genre) {
+    public void setGenre(List<Genre> genre) {
         this.genre = genre;
     }
 
     public void addGenre(Genre genre) {
         if (this.genre == null) {
-            this.genre = new HashSet<>();
+            this.genre = new ArrayList<>();
         }
         this.genre.add(genre);
     }
