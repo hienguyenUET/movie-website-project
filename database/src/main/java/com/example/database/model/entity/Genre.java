@@ -1,6 +1,7 @@
 package com.example.database.model.entity;
 
 import com.example.database.model.dto.GenreDto;
+import com.example.database.model.enums.EGenre;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +20,9 @@ public class Genre {
     @Column(name = "genre_id")
     private long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "genre_name")
-    private String genreName;
+    private EGenre genreName;
 
     @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
@@ -39,11 +41,11 @@ public class Genre {
         this.id = id;
     }
 
-    public String getGenreName() {
+    public EGenre getGenreName() {
         return genreName;
     }
 
-    public void setGenreName(String genreName) {
+    public void setGenreName(EGenre genreName) {
         this.genreName = genreName;
     }
 

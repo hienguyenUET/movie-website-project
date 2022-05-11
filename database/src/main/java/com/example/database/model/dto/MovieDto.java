@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @Data
@@ -23,7 +22,7 @@ public class MovieDto {
 
     private List<Genre> genre;
 
-    private List<Account> people;
+    private List<User> people;
 
     private List<Actor> actors;
 

@@ -26,7 +26,6 @@ public class Movie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-
     @NonNull
     @Column(name = "title")
     @JsonProperty("Title")

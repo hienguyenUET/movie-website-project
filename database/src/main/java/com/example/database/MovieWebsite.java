@@ -27,7 +27,7 @@ import java.util.List;
 
 
 @SpringBootApplication
-public class MovieWebsite implements CommandLineRunner {
+public class MovieWebsite {
     @Autowired
     private MovieService movieService;
 
@@ -37,49 +37,49 @@ public class MovieWebsite implements CommandLineRunner {
         SpringApplication.run(MovieWebsite.class, args);
     }
 
-    @Override
-    public void run(String... args) throws JsonProcessingException {
-        ResponseEntity<JSONTemplate> responseEntity = restTemplate.exchange(
-                "https://www.omdbapi.com/?s=avengers&apikey=7f478e24",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<JSONTemplate>() {
-                    @Override
-                    public Type getType() {
-                        return super.getType();
-                    }
-                }
-        );
-        JSONTemplate template = responseEntity.getBody();
-        assert template != null;
-        List<Movie> avenger = new ArrayList<>(template.getMovies());
-
-        for (Movie value : avenger) {
-            String uri = "http://www.omdbapi.com/?apikey=660ad911&t=" + value.getTitle();
-            RestTemplate restTemplate = new RestTemplate();
-            ObjectMapper objectMapper = new ObjectMapper();
-            String movieJson = restTemplate.getForObject(uri, String.class);
-
-            LinkedHashMap<String, String> movies = (LinkedHashMap<String, String>) objectMapper.readValue(movieJson, Object.class);
-            Date releaseDate = Date.valueOf(DateFormatByJson.dateFormattedByJson(movies.get("Released")));
-            Movie movie = new Movie(movies.get("Title"));
-            movie.setReleaseDate(releaseDate);
-//            movie.setActors(movies.get("Actors"));
-//            String[] actor = movies.get("Actors").split(", ");
-//            for (String s : actor) {
-//                Actor actor1 = new Actor();
-//                actor1.setPersonName(s);
-//                movie.addActor(actor1);
+//    @Override
+//    public void run(String... args) throws JsonProcessingException {
+//        ResponseEntity<JSONTemplate> responseEntity = restTemplate.exchange(
+//                "https://www.omdbapi.com/?s=avengers&apikey=7f478e24",
+//                HttpMethod.GET,
+//                null,
+//                new ParameterizedTypeReference<JSONTemplate>() {
+//                    @Override
+//                    public Type getType() {
+//                        return super.getType();
+//                    }
+//                }
+//        );
+//        JSONTemplate template = responseEntity.getBody();
+//        assert template != null;
+//        List<Movie> avenger = new ArrayList<>(template.getMovies());
+//
+//        for (Movie value : avenger) {
+//            String uri = "http://www.omdbapi.com/?apikey=660ad911&t=" + value.getTitle();
+//            RestTemplate restTemplate = new RestTemplate();
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            String movieJson = restTemplate.getForObject(uri, String.class);
+//
+//            LinkedHashMap<String, String> movies = (LinkedHashMap<String, String>) objectMapper.readValue(movieJson, Object.class);
+//            Date releaseDate = Date.valueOf(DateFormatByJson.dateFormattedByJson(movies.get("Released")));
+//            Movie movie = new Movie(movies.get("Title"));
+//            movie.setReleaseDate(releaseDate);
+////            movie.setActors(movies.get("Actors"));
+////            String[] actor = movies.get("Actors").split(", ");
+////            for (String s : actor) {
+////                Actor actor1 = new Actor();
+////                actor1.setPersonName(s);
+////                movie.addActor(actor1);
+////            }
+//            String[] genres = movies.get("Genre").split(", ");
+//            for (String s : genres) {
+//                Genre genre1 = new Genre();
+//                genre1.setGenreName(s);
+//                movie.addGenre(genre1);
 //            }
-            String[] genres = movies.get("Genre").split(", ");
-            for (String s : genres) {
-                Genre genre1 = new Genre();
-                genre1.setGenreName(s);
-                movie.addGenre(genre1);
-            }
-            movieService.save(movie);
-
-        }
-        System.out.println(avenger);
-    }
+//            movieService.save(movie);
+//
+//        }
+//        System.out.println(avenger);
+//    }
 }

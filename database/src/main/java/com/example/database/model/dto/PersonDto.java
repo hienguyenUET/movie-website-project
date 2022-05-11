@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 @Data
 public class PersonDto implements Serializable {
-    private Long id;
+    private int id;
     private String name;
     private String password;
     private List<Movie> movies;

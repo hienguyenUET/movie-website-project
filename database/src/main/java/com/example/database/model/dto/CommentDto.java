@@ -1,6 +1,6 @@
 package com.example.database.model.dto;
 
-import com.example.database.model.entity.Account;
+import com.example.database.model.entity.User;
 import com.example.database.model.entity.Movie;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +16,5 @@ public class CommentDto implements Serializable {
 
     private Movie movie;
 
-    private Account account;
+    private User user;
 }

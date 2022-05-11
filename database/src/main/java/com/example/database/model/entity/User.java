@@ -8,26 +8,28 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "username")
+        })
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     @Column
     @NotNull
     @Size(min = 6, message = "Username must be longer than 6 characters")
     private String username;
 
+    @JsonIgnore
     @Column
     private String name;
 
@@ -39,6 +41,17 @@ public class Account {
     @NotNull
     @Email
     private String email;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id", referencedColumnName = "id", updatable = false)
+    private Role role;
+
+    // Create new user's account
+    public User(String username, String email, String password) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 //
 //    @JsonIgnore
 //    @ManyToMany
