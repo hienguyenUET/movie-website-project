@@ -19,23 +19,19 @@ import java.util.List;
 public class Country {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name = "country_id")
     private long id;
 
     @Column
     private String countryName;
 
-    @ManyToMany
-    @JoinTable(
-            name = "movie_country",
-            joinColumns = @JoinColumn(name = "country_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id")
-    )
-    private List<Movie> movies;
 
-    public CountryDto toDto() {
-        return CountryDto.builder()
-                .id(id)
-                .countryName(countryName)
-                .build();
+    @Override
+    public String toString() {
+        return "Country{" +
+                "id=" + id +
+                ", countryName='" + countryName + '\'' +
+//                ", movies=" + movies +
+                '}';
     }
 }
