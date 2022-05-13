@@ -2,8 +2,11 @@ package com.example.database.model.entity;
 
 import com.example.database.model.dto.MovieDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -21,47 +24,51 @@ import java.util.List;
 
 @Entity
 @Table(name = "movie")
+@Setter
+@Getter
 public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "movie_id")
     private int id;
+
+    @Column(name = "id_movie_api")
+    private String idAPI;
 
     @NonNull
     @Column(name = "title")
     @JsonProperty("Title")
     private String title;
-    //
-//
+
+    @Column(name = "plot")
+    private String plot;
+
     @Column(name = "release_date")
     private Date releaseDate;
 
-//    @NonNull
-//    @JsonIgnore
-//    @ManyToMany(mappedBy = "movies")
-//    private List<Account> people = new ArrayList<>();
+    @Column(name = "runtime")
+    private String runtime;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "comment_id")
-    private List<Comment> comments;
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "comment_id")
+//    private List<Comment> comments;
 
-
-    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinTable(name = "cast",
-            joinColumns = @JoinColumn(name = "person_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id")
+    @JoinTable(name = "movie_actor",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
     private List<Actor> actors;
 
 
-    @ManyToMany(cascade = {CascadeType.PERSIST})
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "movie_genre",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private List<Genre> genre;
-
+//
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "movie_company",
@@ -70,7 +77,6 @@ public class Movie {
     )
     private List<Company> companies;
 
-    @JsonIgnore
     @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "movie_country",
@@ -78,8 +84,8 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "country_id")
     )
     List<Country> countries;
-
-    @ManyToMany
+//
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "movie_language",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -102,106 +108,35 @@ public class Movie {
 //                .productionDate(productionDate)
                 .actors(actors)
                 .country(countries)
-                .comments(comments)
+//                .comments(comments)
                 .genre(genre)
                 .company(companies)
                 .build();
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
-
-    public void setReleaseDate(Date releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public List<Actor> getActors() {
-        return actors;
-    }
-
-    public void setActors(List<Actor> actors) {
-        this.actors = actors;
-    }
-
-    public void addActor(Actor actor) {
-        if (this.actors == null) {
-            this.actors = new ArrayList<>();
-        }
-        actors.add(actor);
-    }
-
-    public List<Genre> getGenre() {
-        return genre;
-    }
-
-    public void setGenre(List<Genre> genre) {
-        this.genre = genre;
-    }
-
-    public void addGenre(Genre genre) {
-        if (this.genre == null) {
-            this.genre = new ArrayList<>();
-        }
-        this.genre.add(genre);
-    }
-
-    public List<Company> getCompanies() {
-        return companies;
-    }
-
-    public void setCompanies(List<Company> companies) {
-        this.companies = companies;
-    }
-
-    public List<Country> getCountries() {
-        return countries;
-    }
-
-    public void setCountries(List<Country> countries) {
-        this.countries = countries;
-    }
-
-    public List<Language> getLanguages() {
-        return languages;
-    }
-
-    public void setLanguages(List<Language> languages) {
-        this.languages = languages;
-    }
+//
+//    public List<Comment> getComments() {
+//        return comments;
+//    }
+//
+//    public void setComments(List<Comment> comments) {
+//        this.comments = comments;
+//    }
 
     @Override
     public String toString() {
         return "Movie{" +
                 "id=" + id +
-                ", title='" + title + '\'' +
-                ", releaseDate=" + releaseDate +
-                ", actors=" + actors +
-                ", genre=" + genre +
+                ", idAPI='" + idAPI + '\n' +
+                ", title='" + title + '\n' +
+                ", plot='" + plot + '\n' +
+                ", releaseDate=" + releaseDate + '\n' +
+                ", runtime='" + runtime + '\n' +
+                ", actors=" + actors + '\n' +
+                ", genre=" + genre + '\n'+
+                ", companies=" + companies + '\n' +
+                ", countries=" + countries + '\n' +
+                ", languages=" + languages + '\n' +
                 '}';
     }
 }
