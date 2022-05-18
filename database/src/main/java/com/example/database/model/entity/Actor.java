@@ -19,37 +19,21 @@ public class Actor {
 
     @Column(name = "name")
     private String name;
-//    @ManyToMany
-//    @JoinTable(
-//            name = "movie_actor",
-//            joinColumns = @JoinColumn(name = "actor_id"),
-//            inverseJoinColumns = @JoinColumn(name = "movie_id")
-//    )
-//    private List<Movie> movies;
 
-    public int getID() {
-        return id;
-    }
+    @Column(name = "character_name")
+    private String characterName;
 
-    public void setID(int ID) {
-        this.id = ID;
-    }
+    @Column(name = "profile_path")
+    private String profilePath;
 
-    public String getName() {
-        return name;
-    }
+    @Column(name = "biography")
+    private String biography;
 
-    public void setName(String personName) {
-        this.name = personName;
-    }
+    @Column(name = "date_of_birth")
+    private String dateOfBirth;
 
-//    public List<Movie> getMovies() {
-//        return movies;
-//    }
-//
-//    public void setMovies(List<Movie> movies) {
-//        this.movies = movies;
-//    }
+    @Column(name = "place_of_birth")
+    private String placeOfBirth;
 
     @Override
     public String toString() {

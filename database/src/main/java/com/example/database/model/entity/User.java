@@ -3,11 +3,16 @@ package com.example.database.model.entity;
 import com.example.database.model.dto.PersonDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users",
@@ -19,7 +24,7 @@ import javax.validation.constraints.Size;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -53,13 +58,13 @@ public class User {
         this.password = password;
     }
 //
-//    @JsonIgnore
-//    @ManyToMany
-//    @JoinTable(name = "user_film",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "film_id")
-//    )
-//    private List<Movie> movies = new ArrayList<>();
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "user_movie",
+            joinColumns = @JoinColumn(name = "users_id"),
+            inverseJoinColumns = @JoinColumn(name = "movie_id")
+    )
+    private List<Movie> movies = new ArrayList<>();
 
 //    @JsonIgnore
 //    @OneToMany(mappedBy = "person")

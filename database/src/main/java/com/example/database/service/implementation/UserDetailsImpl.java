@@ -32,7 +32,7 @@ public class UserDetailsImpl implements UserDetails {
 //        List<GrantedAuthority> authorities = user.getRole().stream()
 //                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
 //                .collect(Collectors.toList());
-        SimpleGrantedAuthority authorities = new SimpleGrantedAuthority(user.getRole().getName().name());
+        GrantedAuthority authorities = new SimpleGrantedAuthority(user.getRole().getName().name());
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
@@ -74,5 +74,16 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetailsImpl{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", authorities=" + authorities +
+                '}';
     }
 }

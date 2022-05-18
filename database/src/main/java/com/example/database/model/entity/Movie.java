@@ -41,13 +41,16 @@ public class Movie {
     private String title;
 
     @Column(name = "plot")
-    private String plot;
+    private String overview;
 
     @Column(name = "release_date")
     private Date releaseDate;
 
     @Column(name = "runtime")
     private String runtime;
+
+    @Column(name = "homepage")
+    private String homepage;
 
 //    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JoinColumn(name = "comment_id")
@@ -60,6 +63,17 @@ public class Movie {
     )
     private List<Actor> actors;
 
+    @Column(name = "poster_path")
+    private String posterPath;
+
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name = "keyword_movie",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "keyword_id")
+
+    )
+    List<Keyword> keywords;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -129,7 +143,7 @@ public class Movie {
                 "id=" + id +
                 ", idAPI='" + idAPI + '\n' +
                 ", title='" + title + '\n' +
-                ", plot='" + plot + '\n' +
+                ", plot='" + overview + '\n' +
                 ", releaseDate=" + releaseDate + '\n' +
                 ", runtime='" + runtime + '\n' +
                 ", actors=" + actors + '\n' +

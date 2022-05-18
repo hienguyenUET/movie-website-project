@@ -1,5 +1,6 @@
 package com.example.database.service.service;
 
+import com.example.database.model.entity.Genre;
 import com.example.database.model.entity.Movie;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,4 +13,7 @@ public interface MovieService {
     void save(Movie movie);
     void deleteById(int theId);
     Boolean existsByTitle(String name);
+    Boolean existsByIdAPI(String idAPI);
+    List<Movie> findByGenre_GenreName(String genre_genreName);
+    Movie findByIdAPI(String idAPI);
 }
