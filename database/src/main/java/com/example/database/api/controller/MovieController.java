@@ -18,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Type;
-import java.security.Key;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("movie")
@@ -65,11 +63,23 @@ public class MovieController {
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
 
+
     @GetMapping("/details/{idAPI}")
     public ResponseEntity<Movie> getMovieDetails(@PathVariable String idAPI) {
         Movie movie = movieService.findByIdAPI(idAPI);
         if (movie != null) {
             return new ResponseEntity<>(movie, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/keywords/{idAPI}")
+    public ResponseEntity<Set<Movie>> getRelatedMoviesByKeyword(@PathVariable String idAPI) {
+        Movie movie = movieService.findByIdAPI(idAPI);
+        if (movie != null) {
+            List<Keyword> key = movie.getKeywords();
+            Set<Movie> relatedMovies = movieService.findAllByKeywordsIn(key);
+            return new ResponseEntity<>(relatedMovies, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }
@@ -143,12 +153,31 @@ public class MovieController {
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping("/tv_movies")
+    public ResponseEntity<List<Movie>> getTvMovies() {
+        List<Movie> movies = movieService.findByGenre_GenreName("TV Movie");
+        if (movies.size() > 0) {
+            return new ResponseEntity<>(movies, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    }
+
+    // search movies by name
+    @GetMapping("/search/{title}")
+    public ResponseEntity<List<Movie>> getMovieByName(@PathVariable String title) {
+        List<Movie> movies = movieService.findByTitleContaining(title);
+        if (movies != null) {
+            return new ResponseEntity<>(movies, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
     @GetMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
 //    @PreAuthorize("hasRole('ADMIN')")
     public void getMovies() {
         for (int i = 1; i < 6; i++) {
             ResponseEntity<TMDBResultResponse> responseEntity = restTemplate.exchange(
-                    "https://api.themoviedb.org/3/discover/movie?api_key=73b750a9c1721e4bce1ae7fc3a32c1a2&with_genres=27&page=" + i,
+                    "https://api.themoviedb.org/3/discover/movie?api_key=73b750a9c1721e4bce1ae7fc3a32c1a2&with_genres=10770&page=" + i,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<TMDBResultResponse>() {
