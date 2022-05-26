@@ -7,10 +7,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -56,17 +61,18 @@ public class Movie {
 //    @JoinColumn(name = "comment_id")
 //    private List<Comment> comments;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "movie_actor",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
-    private List<Actor> actors;
+    private Collection<Actor> actors;
 
     @Column(name = "poster_path")
     private String posterPath;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany()
     @JoinTable(
             name = "keyword_movie",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -75,7 +81,8 @@ public class Movie {
     )
     List<Keyword> keywords;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany()
     @JoinTable(
             name = "movie_genre",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -83,7 +90,8 @@ public class Movie {
     )
     private List<Genre> genre;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST})
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany()
     @JoinTable(
             name = "movie_company",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -91,15 +99,17 @@ public class Movie {
     )
     private List<Company> companies;
 
-    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany()
     @JoinTable(
             name = "movie_country",
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "country_id")
     )
     List<Country> countries;
-//
-    @ManyToMany(cascade = CascadeType.ALL)
+    //
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany()
     @JoinTable(
             name = "movie_language",
             joinColumns = @JoinColumn(name = "movie_id"),
@@ -120,11 +130,9 @@ public class Movie {
 //                .homepage(homepage)
                 .title(title)
 //                .productionDate(productionDate)
-                .actors(actors)
-                .country(countries)
+//                .actors(actors)
 //                .comments(comments)
-                .genre(genre)
-                .company(companies)
+//                .company(companies)
                 .build();
     }
 
@@ -147,7 +155,7 @@ public class Movie {
                 ", releaseDate=" + releaseDate + '\n' +
                 ", runtime='" + runtime + '\n' +
                 ", actors=" + actors + '\n' +
-                ", genre=" + genre + '\n'+
+                ", genre=" + genre + '\n' +
                 ", companies=" + companies + '\n' +
                 ", countries=" + countries + '\n' +
                 ", languages=" + languages + '\n' +

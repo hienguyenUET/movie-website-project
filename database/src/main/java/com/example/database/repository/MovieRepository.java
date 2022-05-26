@@ -9,7 +9,6 @@ import java.util.Set;
 
 public interface MovieRepository extends JpaRepository<Movie, Integer> {
     Movie searchByTitle(String name);
-    Boolean existsByTitle(String name);
     Boolean existsByIdAPI(String idAPI);
     List<Movie> findByGenre_GenreName(String genre_genreName);
     Movie findByIdAPI(String idAPI);

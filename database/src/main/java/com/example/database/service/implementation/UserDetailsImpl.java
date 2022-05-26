@@ -1,5 +1,6 @@
 package com.example.database.service.implementation;
 
+import com.example.database.model.entity.Movie;
 import com.example.database.model.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,8 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Setter
 @Getter
@@ -19,6 +22,11 @@ public class UserDetailsImpl implements UserDetails {
     private String email;
     private String password;
     private GrantedAuthority authorities;
+
+    public UserDetailsImpl(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public UserDetailsImpl(int id, String username, String email, String password, GrantedAuthority authorities) {
         this.id = id;

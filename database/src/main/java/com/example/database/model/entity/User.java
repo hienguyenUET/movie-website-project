@@ -24,7 +24,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User{
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -57,18 +57,12 @@ public class User{
         this.email = email;
         this.password = password;
     }
-//
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "user_movie",
-            joinColumns = @JoinColumn(name = "users_id"),
-            inverseJoinColumns = @JoinColumn(name = "movie_id")
-    )
-    private List<Movie> movies = new ArrayList<>();
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "person")
-//    private List<Comment> comments = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "user_movie",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "movie_id"))
+    List<Movie> favoriteMovies;
 
     public PersonDto toDto() {
         return PersonDto.builder()
@@ -77,6 +71,10 @@ public class User{
                 .password(password)
 //                .movies(movies)
                 .build();
+    }
+
+    public void addFavoriteMovie(Movie movie) {
+        this.favoriteMovies.add(movie);
     }
 
     @Override

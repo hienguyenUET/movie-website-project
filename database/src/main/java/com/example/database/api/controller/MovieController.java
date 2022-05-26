@@ -37,6 +37,7 @@ public class MovieController {
     private LanguageService languageService;
     @Autowired
     private KeywordService keywordService;
+    private final ActorController actorController = new ActorController();
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -177,7 +178,7 @@ public class MovieController {
     public void getMovies() {
         for (int i = 1; i < 6; i++) {
             ResponseEntity<TMDBResultResponse> responseEntity = restTemplate.exchange(
-                    "https://api.themoviedb.org/3/discover/movie?api_key=73b750a9c1721e4bce1ae7fc3a32c1a2&with_genres=10770&page=" + i,
+                    "https://api.themoviedb.org/3/discover/movie?api_key=73b750a9c1721e4bce1ae7fc3a32c1a2&with_genres=12&page=" + i,
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<TMDBResultResponse>() {
@@ -188,7 +189,6 @@ public class MovieController {
                     }
             );
             TMDBResultResponse IMDBResultResponse = responseEntity.getBody();
-            System.out.println(responseEntity.getBody());
             // check if ac
             for (int j = 0; j < IMDBResultResponse.getResult().size(); j++) {
                 Movie movie = getMovieInfo(IMDBResultResponse.getResult().get(j).getId());
@@ -294,16 +294,17 @@ public class MovieController {
 
         ActorResultResponse res = responseEntity.getBody();
 
-        for (int i = 0; i < res.getActorResponseBodies().size(); i++) {
+        for (int i = 0; i < Objects.requireNonNull(res).getActorResponseBodies().size(); i++) {
             if (!actorService.existsByName(res.getActorResponseBodies().get(i).getName())) {
                 Actor actor = new Actor();
                 ActorResponseBody actorResponseBody = res.getActorResponseBodies().get(i);
+                DetailedActor detailedActor = actorController.getDetailedActor(actorResponseBody.getId());
                 actor.setName(res.getActorResponseBodies().get(i).getName());
                 actor.setCharacterName(res.getActorResponseBodies().get(i).getCharacterName());
                 actor.setProfilePath("https://image.tmdb.org/t/p/original/" + res.getActorResponseBodies().get(i).getImage());
-                actor.setBiography(res.getActorResponseBodies().get(i).getBiography());
-                actor.setDateOfBirth(actorResponseBody.getDateOfBirth());
-                actor.setPlaceOfBirth(actorResponseBody.getPlaceOfBirth());
+                actor.setBiography(detailedActor.getBiography());
+                actor.setDateOfBirth(detailedActor.getBirthday());
+                actor.setPlaceOfBirth(detailedActor.getPlaceOfBirth());
                 actorService.save(actor);
             }
             Actor actor = actorService.findActorByName(res.getActorResponseBodies().get(i).getName());
@@ -311,6 +312,8 @@ public class MovieController {
         }
         return actors;
     }
+
+
 
     // check if genre existing in database. If it hasn't, create new record
     public Genre checkExistGenre(String name) {

@@ -3,6 +3,7 @@ package com.example.database.model.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.List;
 
 @Entity
@@ -30,17 +31,8 @@ public class Actor {
     private String biography;
 
     @Column(name = "date_of_birth")
-    private String dateOfBirth;
+    private Date dateOfBirth;
 
     @Column(name = "place_of_birth")
     private String placeOfBirth;
-
-    @Override
-    public String toString() {
-        return "Actor{" +
-                "ID=" + id +
-                ", name='" + name + '\'' +
-//                ", movies=" + movies +
-                '}';
-    }
 }
