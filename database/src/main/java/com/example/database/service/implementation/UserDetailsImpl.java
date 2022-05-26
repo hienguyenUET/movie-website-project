@@ -1,5 +1,6 @@
 package com.example.database.service.implementation;
 
+import com.example.database.model.entity.Movie;
 import com.example.database.model.entity.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,8 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Setter
 @Getter
@@ -19,6 +22,11 @@ public class UserDetailsImpl implements UserDetails {
     private String email;
     private String password;
     private GrantedAuthority authorities;
+
+    public UserDetailsImpl(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public UserDetailsImpl(int id, String username, String email, String password, GrantedAuthority authorities) {
         this.id = id;
@@ -32,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
 //        List<GrantedAuthority> authorities = user.getRole().stream()
 //                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
 //                .collect(Collectors.toList());
-        SimpleGrantedAuthority authorities = new SimpleGrantedAuthority(user.getRole().getName().name());
+        GrantedAuthority authorities = new SimpleGrantedAuthority(user.getRole().getName().name());
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
@@ -74,5 +82,16 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDetailsImpl{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", authorities=" + authorities +
+                '}';
     }
 }

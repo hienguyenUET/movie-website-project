@@ -1,34 +1,22 @@
 package com.example.database.model.dto;
 
 import com.example.database.model.entity.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Date;
 import java.util.List;
 
 @Builder
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class MovieDto {
-    private long id;
-
-    private String homepage;
-
+    private int id;
+    private String idAPI;
     private String title;
-
-    private String image;
-
-    private Date productionDate;
-
-    private List<Genre> genre;
-
-    private List<User> people;
-
-    private List<Actor> actors;
-
-    private List<Company> company;
-
-    private List<Country> country;
-
-    private List<Comment> comments;
+    private String profilePath;
+    private Date releaseDate;
 }

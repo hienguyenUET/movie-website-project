@@ -3,11 +3,16 @@ package com.example.database.model.entity;
 import com.example.database.model.dto.PersonDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users",
@@ -52,18 +57,12 @@ public class User {
         this.email = email;
         this.password = password;
     }
-//
-//    @JsonIgnore
-//    @ManyToMany
-//    @JoinTable(name = "user_film",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "film_id")
-//    )
-//    private List<Movie> movies = new ArrayList<>();
 
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "person")
-//    private List<Comment> comments = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "user_movie",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "movie_id"))
+    List<Movie> favoriteMovies;
 
     public PersonDto toDto() {
         return PersonDto.builder()
@@ -72,6 +71,10 @@ public class User {
                 .password(password)
 //                .movies(movies)
                 .build();
+    }
+
+    public void addFavoriteMovie(Movie movie) {
+        this.favoriteMovies.add(movie);
     }
 
     @Override
