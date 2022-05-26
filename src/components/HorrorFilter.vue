@@ -3,16 +3,16 @@
   <h2>PHIM KINH DỊ</h2>
   <div class="popular-film">
     <div class="movie-item" v-for="movie in movies" :key="movie.id">
-      <router-link :to="'/movie/' + movie.id" class="movie-link">
+      <router-link :to="'/movie/' + movie.idAPI" class="movie-link">
         <div class="poster">
-          <img :src="movie.image" alt="" />
+          <img :src="movie.posterPath" alt="" />
           <p class="rank"><strong>Horror</strong></p>
         </div>
         <div class="detail">
           <p>
-            <strong>{{ movie.title }}</strong>
+            <strong>{{ movie.Title }}</strong>
           </p>
-          <p><strong>Năm Phát Hành: </strong>{{ movie.description }}</p>
+          <p><strong>Năm Phát Hành: </strong>{{ movie.releaseDate }}</p>
         </div>
       </router-link>
     </div>
@@ -24,7 +24,6 @@
 import axios from "axios";
 import WebHeader from "./WebHeader";
 import WebFooter from "./WebFooter";
-import api from "@/api.js";
 export default {
   name: "HorrorFilter",
   components: { WebHeader, WebFooter },
@@ -35,13 +34,9 @@ export default {
   },
   methods: {
     getData() {
-      axios
-        .get(
-          `https://imdb-api.com/API/AdvancedSearch/${api.apikey3}/?genres=horror`
-        )
-        .then((data) => {
-          this.movies = data.data.results;
-        });
+      axios.get("http://localhost:8081/movie/horror").then((data) => {
+        this.movies = data.data;
+      });
     },
   },
   mounted() {

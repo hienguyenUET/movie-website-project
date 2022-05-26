@@ -20,11 +20,23 @@
           type="text"
           name=""
           id="username"
-          placeholder="Tên người sử dụng"
+          placeholder="Username"
           v-model="state.username"
         />
         <span v-if="v$.username.$error">
           {{ v$.username.$errors[0].$message }}
+        </span>
+      </div>
+      <div class="component-item">
+        <input
+          type="text"
+          name=""
+          id="name"
+          placeholder="Tên người dùng"
+          v-model="state.name"
+        />
+        <span v-if="v$.name.$error">
+          {{ v$.name.$errors[0].$message }}
         </span>
       </div>
       <div class="component-item">
@@ -71,32 +83,40 @@ import {
   updateProfile,
 } from "firebase/auth";
 
-import router from "@/router";
+// import router from "@/router";
+import { useRouter } from "vue-router";
 export default {
   name: "SignUp",
   components: { WebFooter },
   setup() {
+    const router = useRouter();
     const state = reactive({
       email: "",
       username: "",
+      name: "",
       password: {
         password: "",
       },
-    }); 
+    });
     // SIGN-UP
-    const signUpUser = onMounted(()=>{
-      fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
+    const signUpUser = onMounted(() => {
+      fetch("http://localhost:8081/signup", {
+        method: "POST",
         headers: {
-          'Content-type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userID : state.email,
-          title : state.username,
-          body: state.password.password
-        })
-      })
-    })
+          email: state.email,
+          username: state.username,
+          name: state.name,
+          password: state.password.password,
+        }),
+      }).then((result) => {
+        if (result.status === 200) {
+          router.push("/");
+        }
+      });
+    });
     const register = () => {
       createUserWithEmailAndPassword(
         getAuth(),
@@ -107,7 +127,8 @@ export default {
           updateProfile(getAuth().currentUser, {
             displayName: state.username,
           });
-          router.push("/login");
+          // router.push("/login");
+          router.push("http://localhost:8081/user/api/add");
         })
         .catch((error) => {
           alert(error);
@@ -119,6 +140,7 @@ export default {
       return {
         email: { required, email },
         username: { required },
+        name: { required },
         password: {
           password: { required, minLength: minLength(6) },
         },
@@ -205,5 +227,4 @@ label {
   text-align: center;
   margin-bottom: 30px;
 }
-
 </style>

@@ -3,14 +3,16 @@
   <h2>PHIM HÀI KỊCH</h2>
   <div class="popular-film">
     <div class="movie-item" v-for="movie in movies" :key="movie.id">
-      <router-link :to="'/movie/' + movie.id" class="movie-link">
+      <router-link :to="'/movie/' + movie.idAPI" class="movie-link">
         <div class="poster">
-          <img :src="movie.image" alt="" />
+          <img :src="movie.posterPath" alt="" />
           <p class="rank"><strong>Comedy</strong></p>
         </div>
         <div class="detail">
-          <p><strong>{{movie.title}}</strong></p>
-          <p><strong>Năm Phát Hành: </strong>{{movie.description}}</p>
+          <p>
+            <strong>{{ movie.Title }}</strong>
+          </p>
+          <p><strong>Năm Phát Hành: </strong>{{ movie.releaseDate }}</p>
         </div>
       </router-link>
     </div>
@@ -20,12 +22,11 @@
 
 <script>
 import axios from "axios";
-import WebHeader from './WebHeader';
-import WebFooter from './WebFooter';
-import api from "@/api.js";
+import WebHeader from "./WebHeader";
+import WebFooter from "./WebFooter";
 export default {
   name: "ComedyFilter",
-  components: {WebHeader, WebFooter},
+  components: { WebHeader, WebFooter },
   data() {
     return {
       movies: [],
@@ -33,11 +34,9 @@ export default {
   },
   methods: {
     getData() {
-      axios
-        .get(`https://imdb-api.com/API/AdvancedSearch/${api.apikey3}/?genres=comedy`)
-        .then((data) => {
-          this.movies=data.data.results
-        });
+      axios.get("http://localhost:8081/movie/comedy").then((data) => {
+        this.movies = data.data;
+      });
     },
   },
   mounted() {
@@ -48,18 +47,18 @@ export default {
 
 <style scoped>
 .popular-film {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 50px;
 }
 .movie-item {
-    margin: 4px;
+  margin: 4px;
 }
 .poster img {
-    width: 250px;
-    height: 380px;
-    object-fit: cover;
-    border-radius: 5px;
+  width: 250px;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 5px;
 }
 .detail {
   background-color: rgb(21, 133, 99);
@@ -81,19 +80,23 @@ export default {
   display: block;
 }
 .rank {
-    position: absolute;
-    top:0;
-    left: 10;
+  position: absolute;
+  top: 0;
+  left: 10;
 }
-.poster>p {
-    background:linear-gradient(to bottom right, rgb(8, 218, 183), rgb(53, 197, 24));
-    color: rgb(170, 32, 32);
-    width: 90px;
-    height: 30px;
-    text-align: center;
-    text-transform: uppercase;
+.poster > p {
+  background: linear-gradient(
+    to bottom right,
+    rgb(8, 218, 183),
+    rgb(53, 197, 24)
+  );
+  color: rgb(170, 32, 32);
+  width: 90px;
+  height: 30px;
+  text-align: center;
+  text-transform: uppercase;
 }
 h2 {
-    margin-top: 50px;
+  margin-top: 50px;
 }
 </style>

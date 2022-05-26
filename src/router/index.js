@@ -3,6 +3,7 @@ import LandingPage from '../components/LandingPage.vue';
 import LoginForm from '../components/LoginForm.vue';
 import SignUp from '../components/SignUp.vue';
 import MovieDetail from '../components/MovieDetail.vue';
+import MovieList from '../components/MovieList.vue';
 import FilmSearch from '../components/FilmSearch.vue';
 import PopularFilm from '../components/PopularFilm.vue';
 import ActionFilter from '../components/ActionFilter.vue';
@@ -17,67 +18,71 @@ import UserProfile from '../components/UserProfile.vue';
 // import { getAuth } from 'firebase/auth'
 
 const routes = [{
-        path: '/signup',
-        component: SignUp
-    },
-    {
-        path: '/',
-        component: LandingPage,
+    path: '/signup',
+    component: SignUp
+},
+{
+    path: '/',
+    component: LandingPage,
 
-    },
-    {
-        path: '/user/:id',
-        component: UserProfile,
-    },
-    {
-        path: '/login',
-        component: LoginForm,
+},
+{
+    path: '/user/:id',
+    component: UserProfile,
+},
+{
+    path: '/login',
+    component: LoginForm,
 
 
-    },
-    {
-        path: '/movie/:id',
-        component: MovieDetail
-    },
-    {
-        path: '/search',
-        component: FilmSearch,
-        // meta: {
-        //     requiresAuth: true
-        // }
-    },
-    {
-        path: '/popularity',
-        component: PopularFilm,
-    },
-    {
-        path: '/actionfilm',
-        component: ActionFilter
-    },
-    {
-        path: '/adventurefilm',
-        component: AdventureFilter
-    },
-    {
-        path: '/comedyfilm',
-        component: ComedyFilter
-    },
-    {
-        path: '/horrorfilm',
-        component: HorrorFilter
-    },
-    {
-        path: '/featurefilm',
-        component: FeatureFilm,
-    },
-    {
-        path: '/tvmovies',
-        component: TvMovies,
-    },
-    {
-        path: '/:pathMatch(.*)*',
-        component: PageNotFound
-    }
+},
+{
+    path: '/movie/:id',
+    component: MovieDetail
+},
+{
+    path: '/search',
+    component: FilmSearch,
+    // meta: {
+    //     requiresAuth: true
+    // }
+},
+{
+    path: '/popularity',
+    component: PopularFilm,
+},
+{
+    path: '/actionfilm',
+    component: ActionFilter
+},
+{
+    path: '/adventurefilm',
+    component: AdventureFilter
+},
+{
+    path: '/comedyfilm',
+    component: ComedyFilter
+},
+{
+    path: '/horrorfilm',
+    component: HorrorFilter
+},
+{
+    path: '/featurefilm',
+    component: FeatureFilm,
+},
+{
+    path: '/tvmovies',
+    component: TvMovies,
+},
+{
+    path: '/:pathMatch(.*)*',
+    component: PageNotFound
+},
+{
+    path: '/favourite',
+    component: MovieList
+}
 ]
 
 const router = createRouter({

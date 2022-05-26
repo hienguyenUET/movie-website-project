@@ -52,13 +52,24 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-            <strong>Welcome,</strong>
+              <strong>Welcome,</strong>
               <span
-                ><i><strong>{{ username }}</strong></i></span>
-              <img id="avatar" :src="userImg" alt="">
+                ><i
+                  ><strong>{{ username }}</strong></i
+                ></span
+              >
+              <img
+                id="avatar"
+                src="http://fc05.deviantart.net/fs71/f/2012/002/3/a/my_avatar_facebook_style_by_dairon11-d4l4n5w.jpg"
+                alt=""
+              />
             </div>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <div id="profile"><router-link id="route" :to="'/user/' + userID ">Thông Tin Cá Nhân</router-link> </div>
+              <div id="profile">
+                <router-link id="route" :to="'/user/' + userID"
+                  >Thông Tin Cá Nhân</router-link
+                >
+              </div>
               <div id="signout" @click="handleSignOut()">Đăng Xuất</div>
             </div>
           </div>
@@ -68,9 +79,7 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
-        <router-link to="/" class="navbar-brand"
-          >Trang Chủ</router-link
-        >
+        <router-link to="/" class="navbar-brand">Trang Chủ</router-link>
         <button
           class="navbar-toggler"
           type="button"
@@ -153,6 +162,14 @@
                 </li>
               </ul>
             </li>
+            <li v-if="isLoggedIn" class="nav-item">
+              <router-link
+                to="/favourite"
+                class="nav-link active"
+                aria-current="page"
+                >Phim Yêu Thích</router-link
+              >
+            </li>
           </ul>
           <form class="d-flex search-box">
             <button class="btn btn-success" type="submit" value="search">
@@ -168,42 +185,56 @@
 </template>
 <script>
 import { onMounted, ref } from "vue";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+// import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useRouter } from "vue-router";
+import axios from "axios";
+
 export default {
   name: "WebHeader",
   setup() {
     const isLoggedIn = ref(false);
     const username = ref("");
-    const userID = ref("")
-    const userImg = ref("")
+    const userID = ref("");
+    const userEmail = ref("");
     const router = useRouter();
-    let auth;
-    onMounted(() => {
-      auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          isLoggedIn.value = true;
-          username.value = user.displayName;
-          userID.value = user.uid;
-          userImg.value = user.photoURL
-          // console.log(user);
-        } else {
-          isLoggedIn.value = false;
-        }
+
+    onMounted(async () => {
+      const res = await axios.get("http://localhost:8081/user/info", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
+      userID.value = res.data.id;
+      userEmail.value = res.data.email;
+      username.value = res.data.username;
+      isLoggedIn.value = true;
     });
-    const handleSignOut = () => {
-      signOut(auth).then(() => {
-        router.push("/login");
-      });
-    };
+    // let auth;
+
+    // onMounted(() => {
+    //   auth = getAuth();
+    //   onAuthStateChanged(auth, (user) => {
+    //     if (user) {
+    //       isLoggedIn.value = true;
+    //       username.value = user.displayName;
+    //       userID.value = user.uid;
+    //       userImg.value = user.photoURL;
+    //       // console.log(user);
+    //     } else {
+    //       isLoggedIn.value = false;
+    //     }
+    //   });
+    // });
+    function handleSignOut() {
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
     return {
       handleSignOut,
       isLoggedIn,
       username,
       userID,
-      userImg
+      userEmail,
     };
   },
 };
@@ -310,7 +341,8 @@ span {
   margin-left: 5px;
   color: yellow;
 }
-#signout:hover, #route:hover {
+#signout:hover,
+#route:hover {
   color: rgb(61, 168, 132);
 }
 #signout {

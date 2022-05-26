@@ -9,11 +9,11 @@
           name=""
           id="email"
           placeholder="Email đăng nhập"
-          v-model="state.email"
+          v-model="state.username"
         />
-        <span v-if="v$.email.$error">
+        <!-- <span v-if="v$.email.$error">
           {{ v$.email.$errors[0].$message }}
-        </span>
+        </span> -->
       </div>
       <div class="component-item">
         <input
@@ -26,9 +26,12 @@
           {{ v$.password.$errors[0].$message }}
         </span>
       </div>
+      <p v-if="checked === 3" :class="{ error: checked === 3 }">
+        Tài khoản hoặc mật khẩu không chính xác
+      </p>
       <p v-if="errMsg">{{ errMsg }}</p>
       <div class="component-item" id="btn">
-        <button @click="login" type="submit">Đăng nhập</button>
+        <button @click="checkLogin" type="submit">Đăng nhập</button>
       </div>
       <div class="component-item" id="btn1">
         <a id="fb" @click="fbLogin">
@@ -58,29 +61,39 @@
 
 <script>
 import useValidate from "@vuelidate/core";
-import { required, email, minLength } from "@vuelidate/validators";
+import { required, minLength } from "@vuelidate/validators";
 import { computed, reactive, ref } from "vue";
 // import WebHeader from "./WebHeader.vue";
 import WebFooter from "./WebFooter.vue";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  FacebookAuthProvider,
-} from "firebase/auth";
+import { getAuth, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 import router from "@/router";
+import axios from "axios";
 export default {
   components: {
     WebFooter,
-    
   },
   setup() {
     const state = reactive({
-      email: "",
-      password: {
-        password: "",
-      },
+      username: "",
+      password: "",
     });
+    const checked = ref(1);
+
+    const checkLogin = () => {
+      axios
+        .post("http://localhost:8081/auth/login", {
+          username: state.username,
+          password: state.password,
+        })
+        .then((res) => {
+          localStorage.setItem("token", res.data.token);
+          router.push("/");
+          checked.value = 2;
+        })
+        .catch(() => {
+          checked.value = 3;
+        });
+    };
 
     //LOGIN FACEBOOK
     const auth = getAuth();
@@ -88,41 +101,38 @@ export default {
     const errMsg = ref();
     const fbLogin = () => {
       signInWithPopup(auth, provider).then(() => {
-        router.push("/")
+        router.push("/");
       });
     };
 
-    
     // LOGIN USER
-    const login = () => {
-      signInWithEmailAndPassword(auth, state.email, state.password)
-        .then(() => {
-          router.push("/");
-        })
-        .catch((error) => {
-          switch (error.code) {
-            case "auth/invalid-email":
-              errMsg.value = "Invalid email";
-              break;
-            case "auth/user-not-found":
-              errMsg.value = "No account with that email was found";
-              break;
-            case "auth/wrong-password":
-              errMsg.value = "Incorrect password";
-              break;
-            default:
-              errMsg.value = "Email or password was incorrect";
-              break;
-          }
-        });
-    };
-    //
-
+    // const login = (user) => {
+    // signInWithEmailAndPassword(auth, state.username, state.password)
+    //   .then(() => {
+    //     router.push("/");
+    //   })
+    //   .catch((error) => {
+    //     switch (error.code) {
+    //       case "auth/invalid-email":
+    //         errMsg.value = "Invalid email";
+    //         break;
+    //       case "auth/user-not-found":
+    //         errMsg.value = "No account with that email was found";
+    //         break;
+    //       case "auth/wrong-password":
+    //         errMsg.value = "Incorrect password";
+    //         break;
+    //       default:
+    //         errMsg.value = "Email or password was incorrect";
+    //         break;
+    //     }
+    //   });
+    // };
 
     //CHECK VALIDATION FORM
     const rules = computed(() => {
       return {
-        email: { required, email },
+        // username: { required, username },
         password: {
           password: required,
           minLength: minLength(6),
@@ -135,9 +145,10 @@ export default {
     return {
       state,
       v$,
-      login,
+      checkLogin,
       fbLogin,
       errMsg,
+      checked,
     };
   },
   methods: {
@@ -148,6 +159,10 @@ export default {
 };
 </script>
 <style scoped>
+.error {
+  color: red;
+  text-align: center;
+}
 label {
   font-size: 20px;
 }
@@ -217,7 +232,7 @@ p {
   width: 300px;
   height: 30px;
   text-decoration: underline;
-  color:rgb(64, 64, 188) ;
+  color: rgb(64, 64, 188);
   cursor: pointer;
 }
 #btn1 {
@@ -226,6 +241,6 @@ p {
   margin-bottom: 20px;
 }
 #route {
-  color:green
+  color: green;
 }
 </style>

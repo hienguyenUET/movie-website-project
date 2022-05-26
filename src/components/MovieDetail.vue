@@ -18,26 +18,27 @@
         <strong><i>Released: </i></strong>{{ movie.releaseDate }}
       </p>
       <p>
-        <strong><i>Actors: </i></strong>{{ movie.stars }}
+        <strong><i>Country: </i></strong>{{ countries }}
       </p>
       <p>
-        <strong><i>Country: </i></strong>{{ movie.countries }}
+        <strong
+          >Genre:
+          <ul v-for="genre in genres" :key="genre.id">
+            <li>{{ genre.genreName }}</li>
+          </ul></strong
+        >
       </p>
       <p>
-        <strong><i>Genre: </i></strong>{{ movie.genres }}
+        <strong><i>Companies Production: </i></strong>
+        {{ companies }}
       </p>
       <p>
-        <strong><i>Companies Production: </i></strong> {{ movie.companies }}
-      </p>
-      <p>
-        <strong><i>Directors: </i></strong> {{ movie.directors }}
-      </p>
-      <p>
-        <strong><i>Runtime: </i></strong> {{ movie.runtimeStr }}
+        <strong><i>Runtime: </i></strong> {{ movie.runtime }}
       </p>
       <div>
-        <button>
+        <button @click.prevent="addMovie()">
           <svg
+            v-if="checkedAdd === 1"
             xmlns="http://www.w3.org/2000/svg"
             width="16"
             height="16"
@@ -49,6 +50,13 @@
               d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01L8 2.748zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15z"
             />
           </svg>
+
+          <i
+            v-if="checkedAdd === 3"
+            class="fa fa-heart"
+            style="font-size: 16px; color: red"
+          ></i>
+
           Favourite
         </button>
         <button id="btnDel" v-if="isAdmin">Delete Film</button>
@@ -60,18 +68,23 @@
     <input type="text" v-model="favourite" />
     <button @click.prevent="post()">Submit</button>
   </form>
-
   <p>
-    <strong><i>Keywords: </i></strong> {{ movie.keywords }}
+    <strong><i>Keywords: </i></strong>
+    {{ keywords }}
   </p>
   <p class="plot">
-    <strong> <i>Plot: </i> </strong>{{ movie.plot }}
+    <strong> <i>Plot: </i> </strong>{{ movie.overview }}
   </p>
   <h2>DIỄN VIÊN</h2>
   <div class="actor-list">
     <div class="actor-item" v-for="actor in actors" :key="actor.id">
       <div class="actorImg">
-        <img :src="actor.image" alt="" />
+        <img v-if="actor.profilePath" :src="actor.profilePath" alt="" />
+        <!-- <img
+          v-if="actor.profilePath.includes('null')"
+          src="https://thuthuatnhanh.com/wp-content/uploads/2020/09/hinh-avatar-trang-cho-nu.jpg"
+          alt=""
+        /> -->
       </div>
       <div class="actorInfo">
         <p>
@@ -82,10 +95,10 @@
   </div>
   <h2>PHIM LIÊN QUAN</h2>
   <div class="similar-list">
-    <div class="similar-item" v-for="similar in similars" :key="similar.id">
-      <router-link :to="'/movie/' + similar.id" class="similar-link">
+    <div class="similar-item" v-for="similar in similars" :key="similar.idAPI">
+      <router-link :to="'/movie/' + similar.idAPI" class="similar-link">
         <div class="poster">
-          <img :src="similar.image" alt="" />
+          <img :src="similar.posterPath" alt="" />
         </div>
         <div class="similarInfo">
           <p class="title">
@@ -103,9 +116,9 @@ import WebHeader from "./WebHeader.vue";
 import WebFooter from "./WebFooter.vue";
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
-import api from "@/api.js";
+// import api from "@/api.js";
 import axios from "axios";
-import {getAuth, onAuthStateChanged} from 'firebase/auth'
+// import {getAuth, onAuthStateChanged} from 'firebase/auth'
 export default {
   name: "MovieDetail",
   components: { WebHeader, WebFooter },
@@ -114,100 +127,149 @@ export default {
     const favourite = ref();
     const movie = ref({});
     const video = ref({});
+    const countries = ref();
+    const companies = ref();
+    const genres = ref([]);
     const actors = ref([]);
     const similars = ref([]);
+    const keywords = ref();
     const isAdmin = ref(false);
     const route = useRoute();
-    let auth;
-    const post = onMounted(()=>{
-      fetch('https://movies-projects-default-rtdb.asia-southeast1.firebasedatabase.app/user.json', {
-        method: 'POST',
-        headers: {
-          'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-          name : name.value,
-          favourite : favourite.value
-        })
-      })
-    })
-    onMounted(() => {
-      auth = getAuth();
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          if (user.email === 'admin@gmail.com') {
-            isAdmin.value = true;
-          }
-        } else {
-          return;
-        }
-      });
-    });
-    const title = onMounted(() => {
+    const id = ref();
+    const checkedAdd = ref(1);
+    // let auth;
+    // const post = onMounted(() => {
+    //   fetch(
+    //     "https://movies-projects-default-rtdb.asia-southeast1.firebasedatabase.app/user.json",
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-type": "application/json",
+    //       },
+    //       body: JSON.stringify({
+    //         name: name.value,
+    //         favourite: favourite.value,
+    //       }),
+    //     }
+    //   );
+    // });
+    // onMounted(() => {
+    //   auth = getAuth();
+    //   onAuthStateChanged(auth, (user) => {
+    //     if (user) {
+    //       if (user.email === "admin@gmail.com") {
+    //         isAdmin.value = true;
+    //       }
+    //     } else {
+    //       return;
+    //     }
+    //   });
+    // });
+
+    const detail = onMounted(() => {
       axios
-        .get(
-          `https://imdb-api.com/en/API/Title/${api.apikey3}/${route.params.id}`
-        )
+        .get(`http://localhost:8081/movie/details/${route.params.id}`)
         .then((data) => {
+          id.value = data.data.id;
           movie.value = data.data;
+          actors.value = data.data.actors;
+          countries.value = data.data.countries
+            .map((item) => {
+              return item.countryName;
+            })
+            .join(", ");
+          companies.value = data.data.companies
+            .map((item) => {
+              return item.companyName;
+            })
+            .join(", ");
+          genres.value = data.data.genre;
+          keywords.value = data.data.keywords
+            .map((item) => {
+              return item.name;
+            })
+            .join(", ");
         });
     });
+
+    const addMovie = () => {
+      axios
+        .post(`http://localhost:8081/user/add/${id.value}`)
+
+        .then(() => {
+          checkedAdd.value = 3;
+        })
+        .catch(() => {
+          checkedAdd.value = 1;
+        });
+    };
+
     const getLink = () => {
       return "https://www.2embed.ru/embed/imdb/movie?id=" + route.params.id;
     };
-    onMounted(() => {
-      axios
-        .get(
-          `https://imdb-api.com/en/API/Trailer/${api.apikey3}/${route.params.id}`
-        )
-        .then((data) => {
-          video.value = data.data;
-        });
-    });
-    const actor = onMounted(() => {
-      axios
-        .get(
-          `https://imdb-api.com/en/API/Title/${api.apikey3}/${route.params.id}`
-        )
-        .then((data) => {
-          actors.value = data.data.actorList;
-        });
-    });
+    // onMounted(() => {
+    //   axios
+    //     .get(
+    //       `https://imdb-api.com/en/API/Trailer/${api.apikey3}/${route.params.id}`
+    //     )
+    //     .then((data) => {
+    //       video.value = data.data;
+    //     });
+    // });
+    // const actor = onMounted(() => {
+    //   axios
+    //     .get(
+    //       `https://imdb-api.com/en/API/Title/${api.apikey3}/${route.params.id}`
+    //     )
+    //     .then((data) => {
+    //       actors.value = data.data.actorList;
+    //     });
+    // });
     const similiars = onMounted(() => {
       axios
-        .get(
-          `https://imdb-api.com/en/API/Title/${api.apikey3}/${route.params.id}`
-        )
+        .get(`http://localhost:8081/movie/keywords/${route.params.id}`)
         .then((data) => {
-          similars.value = data.data.similars;
+          similars.value = data.data;
         });
     });
-    watch(route,()=>{
+    watch(route, () => {
       similiars();
-      actor();
-      title();
-    })
+      // actor();
+      detail();
+    });
     return {
       name,
+      checkedAdd,
       favourite,
       movie,
       getLink,
-      post,
       video,
       actors,
       similars,
-      isAdmin
+      isAdmin,
+      countries,
+      companies,
+      keywords,
+      genres,
+      addMovie,
     };
   },
 };
 </script>
 
 <style scoped>
+.success {
+  background-color: palevioletred;
+}
+li {
+  color: black;
+  text-decoration: none;
+}
 .movie-detail {
   display: flex;
   /* justify-content: center; */
   /* align-items: center; */
-  height: 550px;
+  height: 600px;
   padding-right: 20px;
   margin-bottom: 20px;
   margin-top: 100px;
@@ -219,7 +281,7 @@ export default {
 }
 iframe {
   width: 755px;
-  height: 550px;
+  height: 600px;
   margin-right: 50px;
 }
 .content p {
@@ -268,7 +330,6 @@ h2 {
 }
 .content strong {
   color: rgb(7, 35, 161);
-  text-decoration: underline;
 }
 .content button {
   margin-top: 20px;

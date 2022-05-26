@@ -13,17 +13,22 @@
       <button class="btn btn-success" type="submit" value="search">
         Search
       </button>
-      
     </form>
-    <span><i>Phim có từ khóa <strong>{{ search }}</strong></i></span>
+    <span
+      ><i
+        >Phim có từ khóa <strong>{{ search }}</strong></i
+      ></span
+    >
     <div class="movies-list">
-      <div class="movie" v-for="movie in movies" :key="movie.imdbID">
-        <router-link :to="'/movie/' + movie.imdbID" class="movie-link">
-          <div v-if="movie.Poster!=='N/A'" class="poster">
-            <img :src="movie.Poster" alt="Movie Poster" />
-            <p class="type"><strong>{{ movie.Type }}</strong></p>
+      <div class="movie" v-for="movie in movies" :key="movie.idAPI">
+        <router-link :to="'/movie/' + movie.idAPI" class="movie-link">
+          <div v-if="movie.posterPath !== 'N/A'" class="poster">
+            <img :src="movie.posterPath" alt="Movie Poster" />
+            <p class="type">
+              <strong>{{ movie.Type }}</strong>
+            </p>
           </div>
-          <div v-if="movie.Poster!=='N/A'" class="detail">
+          <div v-if="movie.Poster !== 'N/A'" class="detail">
             <p>{{ movie.Title }}</p>
             <p><strong>Năm Phát Hành: </strong> {{ movie.Year }}</p>
           </div>
@@ -38,7 +43,7 @@
 import WebHeader from "./WebHeader";
 import WebFooter from "./WebFooter";
 import axios from "axios";
-import api from "@/api.js";
+// import api from "@/api.js";
 export default {
   name: "FilmSearch",
   components: { WebFooter, WebHeader },
@@ -53,17 +58,18 @@ export default {
   methods: {
     getData() {
       axios
-        .get(`https://www.omdbapi.com/?s=${this.search}&apikey=${api.apikey1}`)
+        // .get(`https://www.omdbapi.com/?s=${this.search}&apikey=${api.apikey1}`)
+        .get(`http://localhost:8081/movie/search/${this.search}`)
         .then((data) => {
-          this.movies = data.data.Search;         
+          this.movies = data.data;
         });
     },
     debounceSearch() {
       clearTimeout(this.debounce);
-      this.debounce = setTimeout(()=>{
-        this.getData()
-      },0)
-    }
+      this.debounce = setTimeout(() => {
+        this.getData();
+      }, 0);
+    },
   },
   mounted() {
     this.getData();
@@ -102,12 +108,11 @@ header {
   background-repeat: no-repeat;
 }
 
-
 .navbar a:hover {
   color: rgb(83, 203, 250);
 }
 .movie {
-    margin: 4px;
+  margin: 4px;
 }
 .movies-list {
   margin-top: 50px;
@@ -148,17 +153,21 @@ form {
   display: block;
 }
 .type {
-    position: absolute;
-    top:0;
-    left: 10;
+  position: absolute;
+  top: 0;
+  left: 10;
 }
-.poster>p {
-    background:linear-gradient(to bottom right, rgb(8, 218, 183), rgb(53, 197, 24));
-    color: rgb(170, 32, 32);
-    width: 60px;
-    height: 30px;
-    text-align: center;
-    text-transform: uppercase;
+.poster > p {
+  background: linear-gradient(
+    to bottom right,
+    rgb(8, 218, 183),
+    rgb(53, 197, 24)
+  );
+  color: rgb(170, 32, 32);
+  width: 60px;
+  height: 30px;
+  text-align: center;
+  text-transform: uppercase;
 }
 .search-box {
   margin-bottom: 20px;
